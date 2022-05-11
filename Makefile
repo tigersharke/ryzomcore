@@ -1,5 +1,5 @@
 PORTNAME=	ryzomcore
-DISTVERSION=	g20210913
+DISTVERSION=	g20220103
 CATEGORIES=	games
 PKGNAMESUFFIX=	-dev
 DISTNAME=	${PORTNAME}-${GH_TAGNAME}
@@ -19,7 +19,7 @@ LIB_DEPENDS=	libpng.so:graphics/png \
                 libvorbisfile.so:audio/libvorbis \
 		librrd.so:databases/rrdtool
 
-USES=		linux cmake compiler:c++14-lang iconv:wchar_t pgsql sqlite jpeg gnome qt:5 xorg gl pkgconfig localbase:ldflags #ssl zlib icu
+USES=		shebangfix linux cmake compiler:c++14-lang iconv:wchar_t pgsql sqlite jpeg gnome qt:5 xorg gl pkgconfig #localbase:ldflags #ssl zlib icu
 USE_LINUX=	icu dri libdrm libglvnd xorglibs
 USE_GL=		gl
 USE_XORG=	xxf86vm x11
@@ -30,14 +30,12 @@ BUILD_DEPEND=	cpptest>0:devel/cpptest
 USE_GITHUB=     nodefault
 GH_ACCOUNT=     ryzom
 GH_PROJECT=     ryzomcore
-GH_TAGNAME=	72ccfc9a0238a7aa114750840371928ae035abe6
+GH_TAGNAME=	0ee1536340fee47d60b823b226f5e681a96cdcfc
 
 CMAKE_ARGS=	-DBUILD_UNITTESTS="OFF" \
 		-DWITH_GUI="ON" \
 		-DWITH_QT5="ON" \
                 -DCMAKE_BUILD_TYPE="MinSizeRel" \
-                -DCUSTOM_EXAMPLE_CONF_DIR="${PREFIX}/etc" \
-                -DCUSTOM_MANDIR="${PREFIX}/man" \
                 -DOPENGL_xmesa_INCLUDE_DIR="${PREFIX}/lib" \
 		-DWITH_EXTERNAL="ON" \
 		-DWITH_INSTALL_LIBRARIES="OFF" \
@@ -50,14 +48,13 @@ CMAKE_ARGS=	-DBUILD_UNITTESTS="OFF" \
 		-DFINAL_VERSION="OFF" \
 		-DWITH_3D="ON" \
 		-DWITH_DRIVER_OPENGL="ON" \
-		-DOPENGL_GL_PREFERENCE="GLVND" \
 		-DWITH_SOUND="ON" \
 		-DWITH_DRIVER_OPENAL="ON" \
 		-DWITH_RYZOM_CLIENT="ON" \
 		-DWITH_RYZOM="ON"
-#CONFIGURE_ENV=
+#CONFIGURE_ENV=	OPENGL_GL_PREFERENCE "GLVND"
 
-WRKSRC=	${WRKDIR}/${PORTNAME}-${GH_TAGNAME}/code
+WRKSRC=	${WRKDIR}/${PORTNAME}-${GH_TAGNAME}
 
 #post-patch:
 #	@${REINPLACE_CMD} -e 's|/proc|/compat/linux/proc|g' \
