@@ -19,7 +19,7 @@ LIB_DEPENDS=	libpng.so:graphics/png \
                 libvorbisfile.so:audio/libvorbis \
 		librrd.so:databases/rrdtool
 
-USES=		linux cmake compiler:c++14-lang iconv:wchar_t pgsql sqlite jpeg gnome qt:5 xorg gl #ssl zlib icu
+USES=		linux cmake compiler:c++14-lang iconv:wchar_t pgsql sqlite jpeg gnome qt:5 xorg gl pkgconfig localbase:ldflags #ssl zlib icu
 USE_LINUX=	icu dri libdrm libglvnd xorglibs
 USE_GL=		gl
 USE_XORG=	xxf86vm x11
