@@ -1,71 +1,66 @@
 PORTNAME=	ryzomcore
-DISTVERSION=	g20220124
+DISTVERSION=	g20220430
 CATEGORIES=	games
 PKGNAMESUFFIX=	-dev
 DISTNAME=	${PORTNAME}-${GH_TAGNAME}
 DIST_SUBDIR=	${PORTNAME}${PKGNAMESUFFIX}
 
 MAINTAINER=	nope@nothere
-COMMENT=	Massively multiplayer online role-playing "sandbox" game (MMORPG)
+COMMENT=	massively multiplayer online role-playing "sandbox" game (MMORPG)
 
 LICENSE=	AGPLv3
 
 LIB_DEPENDS=	libpng.so:graphics/png \
 		libluabind.so:devel/luabind \
-		libluajit-5.1.so:lang/luajit-openresty \
 		libcurl.so:ftp/curl \
 		libfreetype.so:print/freetype2 \
 		libogg.so:audio/libogg \
-		libvorbis.so:audio/libvorbis \
-		libvorbisfile.so:audio/libvorbis \
-		librrd.so:databases/rrdtool \
-		libboost_system.so:devel/boost-libs
+                libvorbis.so:audio/libvorbis \
+                libvorbisfile.so:audio/libvorbis \
+		librrd.so:databases/rrdtool
 
-#USES=		linux cmake compiler:c++14-lang
-#USES=		cmake compiler:c++14-lang gnome pathfix
-#USES=		linux cmake compiler:c++14-lang gnome pathfix libtool shebangfix desktop-file-utils gettext iconv localbase
-USES=		cmake compiler:c++14-lang gnome pathfix libtool shebangfix desktop-file-utils gettext iconv localbase
-#USE_LINUX=	icu dri libdrm libglvnd xorglibs openssl libpciaccess devtools
+USES=		shebangfix linux cmake compiler:c++14-lang iconv:wchar_t pgsql sqlite jpeg gnome qt:5 xorg gl pkgconfig #localbase:ldflags #ssl zlib icu
+USE_LINUX=	icu dri libdrm libglvnd xorglibs
 USE_GL=		gl
 USE_XORG=	xxf86vm x11
-USE_GNOME=	gvfs libxml2 gtk20 introspection gnomeprefix dconf
-USE_LDCONFIG=   yes
+USE_GNOME=	gvfs libxml2
+#USE_LDCONFIG=   yes
 
 BUILD_DEPEND=	cpptest>0:devel/cpptest
 USE_GITHUB=     nodefault
 GH_ACCOUNT=     ryzom
 GH_PROJECT=     ryzomcore
-GH_TAGNAME=	3f1f46bc7d006d6518a45aa9c6dde36cdf1039b1
+GH_TAGNAME=	ea036476b18fa4d48c85542f5dbfc3bc70ee2cbc
 
-CMAKE_ARGS=	-DWITH_GUI="ON" \
-		-DWITH_QT5="OFF" \
-		-DCMAKE_BUILD_TYPE="MinSizeRel" \
-		-DOPENGL_xmesa_INCLUDE_DIR="${PREFIX}/lib" \
+CMAKE_ARGS=	-DBUILD_UNITTESTS="OFF" \
+		-DWITH_GUI="ON" \
+		-DWITH_QT5="ON" \
+                -DCMAKE_BUILD_TYPE="MinSizeRel" \
+                -DOPENGL_xmesa_INCLUDE_DIR="${PREFIX}/lib" \
 		-DWITH_EXTERNAL="ON" \
-		-DWITH_INSTALL_LIBRARIES="ON" \
-		-DWITH_NEL="ON" \
+		-DWITH_INSTALL_LIBRARIES="OFF" \
+		-DWITH_NEL="OFF" \
 		-DWITH_NEL_SAMPLES="OFF" \
-		-DWITH_NEL_TESTS="ON" \
-		-DWITH_NEL_TOOLS="ON" \
-		-DWITH_RYZOM_SERVER="ON" \
-		-DWITH_RYZOM_TOOLS="ON" \
+		-DWITH_NEL_TESTS="OFF" \
+		-DWITH_NEL_TOOLS="OFF" \
+		-DWITH_RYZOM_SERVER="OFF" \
+		-DWITH_RYZOM_TOOLS="OFF" \
 		-DFINAL_VERSION="OFF" \
 		-DWITH_3D="ON" \
 		-DWITH_DRIVER_OPENGL="ON" \
-		-DWITH_SOUND="OFF" \
-		-DWITH_DRIVER_OPENAL="OFF" \
+		-DWITH_SOUND="ON" \
+		-DWITH_DRIVER_OPENAL="ON" \
 		-DWITH_RYZOM_CLIENT="ON" \
-		-DWITH_RYZOM="ON" \
-		-DWITH_LUA51="OFF"
-CONFIGURE_ARGS+=--with-lib-prefix=${LOCALBASE}
-CONFIGURE_ENV=	OpenGL_GL_PREFERENCE="GLVND" EXTRA_LIBS="-lexecinfo"
+		-DWITH_RYZOM="ON"
+#CONFIGURE_ENV=	OPENGL_GL_PREFERENCE "GLVND"
 
 WRKSRC=	${WRKDIR}/${PORTNAME}-${GH_TAGNAME}
 
-CFLAGS+=	-I${LOCALBASE}/include
-CPPFLAGS+=	-I${LOCALBASE}/include
-LDFLAGS+=	-L${LOCALBASE}/lib -I${LOCALBASE}/include -lexecinfo -lpthread -lm
-LIBS+=          -L${LOCALBASE}/lib -I${LOCALBASE}/include -lexecinfo
+CFLAGS+=	-I${LOCALBASE}/include -lexecinfo
+CPPFLAGS+=	-I${LOCALBASE}/include -lexecinfo
+#LDFLAGS+=	-L${LOCALBASE}/lib -I${LOCALBASE}/include -lpthread -lm
+LDFLAGS+=	-L${LOCALBASE}/lib -I${LOCALBASE}/include -lexecinfo
+LIBS+=		-L${LOCALBASE}/lib -I${LOCALBASE}/include -lexecinfo
 
 post-patch:
 	@${REINPLACE_CMD} -e 's|<sys/vfs.h>|<sys/statvfs.h>|g' ${WRKSRC}/nel/src/misc/system_info.cpp
