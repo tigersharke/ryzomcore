@@ -1,5 +1,5 @@
 PORTNAME=	ryzomcore
-DISTVERSION=    g20220512
+DISTVERSION=    g20220609
 CATEGORIES=	games
 PKGNAMESUFFIX=	-dev
 DISTNAME=	${PORTNAME}-${GH_TAGNAME}
@@ -19,7 +19,7 @@ LIB_DEPENDS=	libpng.so:graphics/png \
                 libvorbisfile.so:audio/libvorbis \
 		librrd.so:databases/rrdtool
 
-USES=		lua:51-54 shebangfix cmake compiler:c++0x iconv pgsql sqlite jpeg gnome qt:5 xorg gl pkgconfig
+USES=		lua:51-54 shebangfix cmake compiler:c++11-lang iconv pgsql sqlite jpeg gnome qt:5 xorg gl pkgconfig
 #USES=		lua:51-54 shebangfix cmake compiler:c++14-lang iconv pgsql sqlite jpeg gnome qt:5 xorg gl pkgconfig
 #USES=		shebangfix linux cmake compiler:c++14-lang iconv:wchar_t pgsql sqlite jpeg gnome qt:5 xorg gl pkgconfig
 #USE_LINUX=	icu dri libdrm libglvnd xorglibs
@@ -32,7 +32,7 @@ BUILD_DEPEND=	cpptest>0:devel/cpptest
 USE_GITHUB=     nodefault
 GH_ACCOUNT=     ryzom
 GH_PROJECT=     ryzomcore
-GH_TAGNAME=     0ee0f897353f1d1ee24e184a0ae230bec5aa3b5a
+GH_TAGNAME=     ad20f0cb92797c1e9e8a7c67bd0802369459a552
 
 CMAKE_ARGS=	-DBUILD_UNITTESTS="OFF" \
 		-DWITH_GUI="ON" \
@@ -55,13 +55,20 @@ CMAKE_ARGS=	-DBUILD_UNITTESTS="OFF" \
 		-DWITH_RYZOM_CLIENT="ON" \
 		-DWITH_RYZOM="ON" \
 		-Wno-dev
+CMAKE_ARGS+=	-DCMAKE_BUILD_TYPE=Release \
+		-DWITH_LUA54="ON" \
+		-DWITH_3D="OFF"
 #CONFIGURE_ENV=	OPENGL_GL_PREFERENCE "GLVND"
 
 WRKSRC=	${WRKDIR}/${PORTNAME}-${GH_TAGNAME}
 
 #CFLAGS+=	-lexecinfo
 #CPPFLAGS+=	-I/usr/include -Wno-error=null-dereference -Wno-error=tautological-constant-out-of-range-compare -Wno-error=implicit-const-int-float-conversion
-CPPFLAGS+=	-std=gnu++11 -I/usr/include -Wno-error=null-dereference -Wno-error=tautological-constant-out-of-range-compare -Wno-error=implicit-const-int-float-conversion
+#CPPFLAGS+=	-std=gnu++11 -I/usr/include -Wno-error=null-dereference -Wno-error=tautological-constant-out-of-range-compare \
+CPPFLAGS+=	-I/usr/include -Wno-error=null-dereference -Wno-error=tautological-constant-out-of-range-compare \
+		-Wno-error=implicit-const-int-float-conversion -Wno-error=deprecated-register \
+		-Wnoerror=no-unused-parameter -Wnoerror=no-unused-variable -Wnoerror=no-unused-function \
+		-Wnoerror=no-unused-value -Wnoerror=no-unused-private-field -Wnoerror=no-unused-local-typedef
 LDFLAGS+=	-L/usr/lib -I/usr/include -lpthread -lm
 #LDFLAGS+=	-lexecinfo -lpthread
 #LIBS+=          -lexecinfo
@@ -75,6 +82,13 @@ post-patch:
 ##	@${REINPLACE_CMD} -e 's|<sys/vfs.h>|<sys/statvfs.h>|g' ${WRKSRC}/nel/src/misc/system_info.cpp
 ##	@${REINPLACE_CMD} -e 's|<sys/vfs.h>|<sys/statvfs.h>|g' ${WRKSRC}/src/gui_main.c
 
+# first two to test
+# c++11-lib c++11-lang c++14-lang c++17-lang c11 features env nestedfct c++0x gcc-c++11-lib
+#FAILS: nestedfct compiler:gcc-c++11-lib
+#
+# Regardless of above compiler option it seems to use c++17?
+#Portion of warning message: storage class specifier is deprecated and incompatible with C++17
+#
 #USES=           compiler:c++11-lang gl qmake qt:5 xorg
 #USE_GITHUB=     yes
 #GH_ACCOUNT=     Fushko
